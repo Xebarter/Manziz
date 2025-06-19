@@ -197,17 +197,7 @@ const AdminLogin: React.FC = () => {
           </form>
 
           <div className="mt-6 p-4 bg-gray-50 rounded-lg">
-            <p className="text-sm text-gray-600 text-center">
-              <strong>Available Credentials:</strong><br />
-              <br />
-              <strong>Demo Admin:</strong><br />
-              Username: Admin<br />
-              Password: Manziz123<br />
-              <br />
-              <strong>Database Admin:</strong><br />
-              Username: admin@manziz.com<br />
-              Password: Manziz123
-            </p>
+            
           </div>
         </div>
 
