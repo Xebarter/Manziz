@@ -1,5 +1,4 @@
 import { supabase } from './supabase'
-import bcrypt from 'bcryptjs'
 
 export interface User {
   id: string
@@ -54,15 +53,20 @@ const generateSessionToken = (): string => {
   return crypto.randomUUID() + '-' + Date.now().toString(36)
 }
 
-// Hash password
+// Simple password hashing using Web Crypto API (browser-compatible)
 const hashPassword = async (password: string): Promise<string> => {
-  const saltRounds = 10
-  return await bcrypt.hash(password, saltRounds)
+  const encoder = new TextEncoder()
+  const data = encoder.encode(password)
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data)
+  const hashArray = Array.from(new Uint8Array(hashBuffer))
+  const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('')
+  return hashHex
 }
 
-// Verify password
+// Verify password using Web Crypto API
 const verifyPassword = async (password: string, hash: string): Promise<boolean> => {
-  return await bcrypt.compare(password, hash)
+  const passwordHash = await hashPassword(password)
+  return passwordHash === hash
 }
 
 // Register new user
