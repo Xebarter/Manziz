@@ -23,6 +23,59 @@ A comprehensive restaurant management system built with React, TypeScript, Tailw
 - **Analytics**: Sales reports, popular items, and performance insights
 - **Secure Authentication**: Protected admin access with bcrypt password hashing
 
+## 🚀 Dynamic Open Graph Meta Tags
+
+The app automatically generates dynamic Open Graph meta tags that display the first available menu item's image and information when the site is shared on social media platforms.
+
+### How it works:
+
+1. **Automatic Detection**: The `DynamicMetaTags` component runs on every page load
+2. **Database Query**: Fetches the first available menu item from the `menu_items` table
+3. **Meta Tag Updates**: Dynamically updates Open Graph and Twitter meta tags
+4. **Structured Data**: Updates JSON-LD structured data for better SEO
+
+### Components:
+
+- **`DynamicMetaTags`**: Main component that handles automatic meta tag updates
+- **`useMetaTags`**: Custom hook for page-specific meta tag management
+- **`metaTags.ts`**: Utility functions for meta tag manipulation
+- **`MetaTagDebugger`**: Development tool to inspect meta tags (only in development)
+
+### Usage:
+
+```tsx
+// Automatic meta tags with first menu item
+useMetaTags({ useFirstMenuItem: true })
+
+// Custom meta tags
+useMetaTags({
+  title: 'Custom Title',
+  description: 'Custom description',
+  image: 'custom-image-url.jpg',
+  useFirstMenuItem: true
+})
+```
+
+### Supported Platforms:
+
+- **Facebook**: Open Graph meta tags
+- **Twitter**: Twitter Card meta tags
+- **WhatsApp**: WhatsApp-specific meta tags
+- **LinkedIn**: Open Graph meta tags
+- **Discord**: Open Graph meta tags
+
+### Meta Tags Updated:
+
+- `og:title` - Page title with menu item name
+- `og:description` - Menu item description
+- `og:image` - Menu item image URL
+- `og:image:alt` - Alt text for the image
+- `twitter:title` - Twitter card title
+- `twitter:description` - Twitter card description
+- `twitter:image` - Twitter card image
+- `twitter:image:alt` - Twitter card image alt text
+- Structured data (JSON-LD) with restaurant and menu information
+
 ## 🛠 Tech Stack
 
 - **Frontend**: React 18, TypeScript, Tailwind CSS

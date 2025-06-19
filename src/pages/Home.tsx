@@ -3,11 +3,19 @@ import { Link } from 'react-router-dom'
 import { ChefHat, Clock, Utensils, Star, ArrowRight } from 'lucide-react'
 import { MenuItem } from '../lib/supabase'
 import { supabase } from '../lib/supabase'
+import { useMetaTags } from '../hooks/useMetaTags'
 import Carousel from '../components/Carousel'
 
 const Home: React.FC = () => {
   const [popularItems, setPopularItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
+
+  // Set meta tags for the home page
+  useMetaTags({
+    title: 'Manziz Restaurant - Delicious Food & Fast Service',
+    description: 'Experience the perfect blend of flavor, quality, and convenience at Manziz Restaurant. Order online for delivery or pickup. Fresh ingredients, fast service, variety menu.',
+    useFirstMenuItem: true
+  })
 
   const features = [
     {

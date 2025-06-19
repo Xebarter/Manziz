@@ -2,6 +2,8 @@ import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { Toaster } from 'react-hot-toast'
 import Layout from './components/Layout'
+import DynamicMetaTags from './components/DynamicMetaTags'
+import MetaTagDebugger from './components/MetaTagDebugger'
 import Home from './pages/Home'
 import Menu from './pages/Menu'
 import Cart from './pages/Cart'
@@ -20,6 +22,7 @@ function App() {
   return (
     <Router>
       <div className="min-h-screen bg-gray-50">
+        <DynamicMetaTags />
         <Toaster
           position="top-right"
           toastOptions={{
@@ -70,6 +73,9 @@ function App() {
             <Route path="profile" element={<Profile />} />
           </Route>
         </Routes>
+
+        {/* Development debugger */}
+        <MetaTagDebugger />
       </div>
     </Router>
   )

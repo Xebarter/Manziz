@@ -4,6 +4,7 @@ import { MenuItem } from '../lib/supabase'
 import { supabase } from '../lib/supabase'
 import { useCart } from '../hooks/useCart'
 import { useAuth } from '../hooks/useAuth'
+import { useMetaTags } from '../hooks/useMetaTags'
 import FavoriteButton from '../components/FavoriteButton'
 import toast from 'react-hot-toast'
 
@@ -21,6 +22,13 @@ const Menu: React.FC = () => {
   
   const { addToCart } = useCart()
   const { isAuthenticated } = useAuth()
+
+  // Set meta tags for the menu page
+  useMetaTags({
+    title: 'Menu - Manziz Restaurant',
+    description: 'Explore our delicious menu featuring burgers, chicken, rolex, and more. Fresh ingredients, fast service, variety menu.',
+    useFirstMenuItem: true
+  })
 
   // Updated categories to match the new structure
   const categories = ['all', 'rolex', 'chicken', 'pork', 'beef', 'drinks', 'desserts', 'salad']
