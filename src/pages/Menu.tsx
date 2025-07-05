@@ -19,15 +19,20 @@ const Menu: React.FC = () => {
   const [notes, setNotes] = useState<{ [key: string]: string }>({})
   const [zoomedImage, setZoomedImage] = useState<{ url: string; name: string } | null>(null)
   const [highlightedItem, setHighlightedItem] = useState<string | null>(null)
+  const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(null)
   
   const { addToCart } = useCart()
   const { isAuthenticated } = useAuth()
 
-  // Set meta tags for the menu page
+  // Set meta tags for the menu page with dynamic item support
   useMetaTags({
-    title: 'Menu - Manziz Restaurant',
-    description: 'Explore our delicious menu featuring burgers, chicken, rolex, and more. Fresh ingredients, fast service, variety menu.',
-    useFirstMenuItem: true
+    title: selectedMenuItem ? `${selectedMenuItem.name} - Manziz Restaurant` : 'Menu - Manziz Restaurant',
+    description: selectedMenuItem 
+      ? `${selectedMenuItem.description || `Try our delicious ${selectedMenuItem.name}`} - Only UGX ${selectedMenuItem.price.toLocaleString()} at Manziz Restaurant`
+      : 'Explore our delicious menu featuring burgers, chicken, rolex, and more. Fresh ingredients, fast service, variety menu.',
+    image: selectedMenuItem?.image_url,
+    imageAlt: selectedMenuItem ? `${selectedMenuItem.name} from Manziz Restaurant` : undefined,
+    useFirstMenuItem: !selectedMenuItem
   })
 
   // Updated categories to match the new structure
@@ -89,6 +94,33 @@ const Menu: React.FC = () => {
       return () => clearTimeout(timer)
     }
   }, [highlightedItem])
+
+  // Handle menu item selection from URL
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search)
+    const itemId = urlParams.get('item')
+    
+    if (itemId && menuItems.length > 0) {
+      const item = menuItems.find(menuItem => menuItem.id === itemId)
+      if (item) {
+        setSelectedMenuItem(item)
+        setHighlightedItem(itemId)
+        
+        // Auto-scroll to highlighted item
+        setTimeout(() => {
+          const element = document.getElementById(`menu-item-${itemId}`)
+          if (element) {
+            element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+          }
+        }, 500)
+        
+        // Clear highlight after 3 seconds
+        setTimeout(() => {
+          setHighlightedItem(null)
+        }, 3000)
+      }
+    }
+  }, [menuItems])
 
   const fetchMenuItems = async () => {
     try {
@@ -199,8 +231,12 @@ const Menu: React.FC = () => {
   }
 
   const shareMenuItem = (item: MenuItem) => {
+    // Generate a proper URL for sharing with menu item ID
     const shareUrl = `${window.location.origin}/menu?item=${item.id}`
-    const shareText = `Check out this delicious ${item.name} from Manziz Restaurant! ${item.description} - Only UGX ${item.price.toLocaleString()}`
+    const shareText = `Check out this delicious ${item.name} from Manziz Restaurant! ${item.description || `Try our amazing ${item.name}`} - Only UGX ${item.price.toLocaleString()}`
+    
+    // Update meta tags for this specific item when sharing
+    setSelectedMenuItem(item)
     
     // Check if Web Share API is supported
     if (navigator.share) {

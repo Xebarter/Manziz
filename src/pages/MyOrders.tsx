@@ -41,8 +41,8 @@ const MyOrders: React.FC = () => {
                   )
                 )
                 // Show a toast notification for status changes
-                if (payload.old && (payload.old as Order).status !== updatedOrder.status) {
-                  toast.success(`Order status updated to: ${updatedOrder.status.replace('_', ' ')}`)
+                if (payload.old && (payload.old as Order).order_status !== updatedOrder.order_status) {
+                  toast.success(`Order status updated to: ${updatedOrder.order_status.replace('_', ' ')}`)
                 }
               }
             } else if (payload.eventType === 'DELETE') {
@@ -441,7 +441,7 @@ const MyOrders: React.FC = () => {
                       getStatusColor={getStatusColor}
                       formatTime={formatTime}
                       formatDate={formatDate}
-                isActive={isOrderActive(order.status)}
+                isActive={isOrderActive(order.order_status)}
                       onReorder={reorderItems}
                     />
                   ))}
@@ -476,7 +476,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
   onReorder
 }) => {
   const steps = getStatusSteps(order.delivery_type)
-  const currentStepIndex = getStatusIndex(order.status, order.delivery_type)
+  const currentStepIndex = getStatusIndex(order.order_status, order.delivery_type)
   const deliveryFee = order.delivery_type === 'delivery' ? 5000 : 0 // 5000 UGX for delivery
 
   return (
@@ -492,8 +492,8 @@ const OrderCard: React.FC<OrderCardProps> = ({
                 {formatDate(order.created_at)} at {formatTime(order.created_at)}
             </p>
           </div>
-          <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(order.status)}`}>
-            {order.status.replace('_', ' ')}
+          <span className={`px-3 py-1 text-sm font-medium rounded-full ${getStatusColor(order.order_status)}`}>
+            {order.order_status.replace('_', ' ')}
           </span>
         </div>
 
@@ -600,7 +600,7 @@ const OrderCard: React.FC<OrderCardProps> = ({
               </button>
           )}
               <a
-            href={`https://wa.me/${order.phone_number.replace('+', '')}`}
+            href={`https://wa.me/${order.phone_number?.replace('+', '') || ''}`}
                 target="_blank"
                 rel="noopener noreferrer"
             className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2"

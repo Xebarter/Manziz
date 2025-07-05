@@ -8,6 +8,7 @@ const Header: React.FC = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [cartItemCount, setCartItemCount] = useState(0)
+  const [showCartAnimation, setShowCartAnimation] = useState(false)
   const { getTotalItems } = useCart()
   const { user, isAuthenticated, logout } = useAuth()
   const location = useLocation()
@@ -38,7 +39,16 @@ const Header: React.FC = () => {
 
     // Listen for cart updates
     const handleCartUpdate = (event: CustomEvent) => {
-      setCartItemCount(event.detail.totalItems)
+      const newCount = event.detail.totalItems
+      const oldCount = cartItemCount
+      
+      setCartItemCount(newCount)
+      
+      // Show animation if items were added (count increased)
+      if (newCount > oldCount) {
+        setShowCartAnimation(true)
+        setTimeout(() => setShowCartAnimation(false), 1000)
+      }
     }
 
     window.addEventListener('cartUpdated', handleCartUpdate as EventListener)
@@ -56,7 +66,7 @@ const Header: React.FC = () => {
       window.removeEventListener('cartUpdated', handleCartUpdate as EventListener)
       window.removeEventListener('storage', handleStorageChange)
     }
-  }, [getTotalItems])
+  }, []) // Remove getTotalItems from dependency array
 
   // Handle clicks outside the mobile menu
   useEffect(() => {
@@ -145,9 +155,11 @@ const Header: React.FC = () => {
             
             {/* Cart with Badge */}
             <Link to="/cart" className="relative p-2 text-gray-700 hover:text-orange-600 transition-colors group">
-              <ShoppingCart className="w-5 h-5" />
+              <ShoppingCart className={`w-5 h-5 transition-transform duration-300 ${showCartAnimation ? 'scale-110' : ''}`} />
               {cartItemCount > 0 && (
-                <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center font-bold animate-pulse group-hover:animate-bounce transition-all duration-200 shadow-lg">
+                <span className={`absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-[22px] h-6 flex items-center justify-center font-bold transition-all duration-200 shadow-lg border-2 border-white ${
+                  showCartAnimation ? 'animate-bounce scale-125' : 'animate-pulse group-hover:animate-bounce'
+                }`}>
                   {cartItemCount > 99 ? '99+' : cartItemCount}
                 </span>
               )}
@@ -156,6 +168,8 @@ const Header: React.FC = () => {
                 <span className="absolute inset-0 rounded-full bg-orange-400 opacity-20 animate-ping"></span>
               )}
             </Link>
+            
+
 
             {/* User Menu */}
             {isAuthenticated && user ? (
@@ -253,7 +267,7 @@ const Header: React.FC = () => {
                   <span>Cart</span>
                 </div>
                 {cartItemCount > 0 && (
-                  <span className="bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center font-bold">
+                  <span className="bg-red-500 text-white text-xs rounded-full min-w-[22px] h-6 flex items-center justify-center font-bold border-2 border-white shadow-lg">
                     {cartItemCount > 99 ? '99+' : cartItemCount}
                   </span>
                 )}

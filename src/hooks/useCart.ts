@@ -22,6 +22,8 @@ export const useCart = () => {
   const dispatchCartUpdate = (newCart: CartItem[]) => {
     const totalItems = newCart.reduce((total, item) => total + item.quantity, 0)
     
+    console.log('Dispatching cart update:', { totalItems, cartLength: newCart.length }) // Debug log
+    
     // Dispatch custom event for real-time updates
     window.dispatchEvent(new CustomEvent('cartUpdated', { 
       detail: { 

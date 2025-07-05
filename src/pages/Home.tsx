@@ -10,7 +10,7 @@ const Home: React.FC = () => {
   const [popularItems, setPopularItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
 
-  // Set meta tags for the home page
+  // Set meta tags for the home page with featured menu item
   useMetaTags({
     title: 'Manziz Restaurant - Delicious Food & Fast Service',
     description: 'Experience the perfect blend of flavor, quality, and convenience at Manziz Restaurant. Order online for delivery or pickup. Fresh ingredients, fast service, variety menu.',

@@ -91,8 +91,8 @@ const OrderManagement: React.FC = () => {
             setSelectedOrder(updatedOrder)
           }
           // Show toast for status changes
-          if (payload.old && (payload.old as Order).status !== updatedOrder.status) {
-            toast.success(`Order status updated to: ${updatedOrder.status.replace('_', ' ')}`)
+          if (payload.old && (payload.old as Order).order_status !== updatedOrder.order_status) {
+            toast.success(`Order status updated to: ${updatedOrder.order_status.replace('_', ' ')}`)
           }
           break
           
@@ -148,7 +148,7 @@ const OrderManagement: React.FC = () => {
     try {
       const { error } = await supabase
         .from('orders')
-        .update({ status: newStatus })
+        .update({ order_status: newStatus })
         .eq('id', orderId)
 
       if (error) throw error
@@ -281,7 +281,7 @@ const OrderManagement: React.FC = () => {
 
   const canDeleteOrder = (order: Order) => {
     // Allow deletion of any order except those that are currently being processed
-    return !['preparing', 'out_for_delivery'].includes(order.status)
+    return !['preparing', 'out_for_delivery'].includes(order.order_status)
   }
 
   // Filter orders based on search query and status
@@ -291,7 +291,7 @@ const OrderManagement: React.FC = () => {
       order.phone_number?.includes(searchQuery) ||
       order.id.toLowerCase().includes(searchQuery.toLowerCase())
     
-    const matchesStatus = statusFilter === 'all' || order.status === statusFilter
+    const matchesStatus = statusFilter === 'all' || order.order_status === statusFilter
     
     return matchesSearch && matchesStatus
   })
@@ -355,9 +355,9 @@ const OrderManagement: React.FC = () => {
           <div className="block lg:hidden">
             <div className="divide-y divide-gray-200">
               {filteredOrders.map((order) => {
-                const nextStatuses = getNextStatusOptions(order.status, order.delivery_type)
+                const nextStatuses = getNextStatusOptions(order.order_status, order.delivery_type)
                 const isUpdating = updatingStatus === order.id
-                const canCancel = canCancelOrder(order.status)
+                const canCancel = canCancelOrder(order.order_status)
                 const canDelete = canDeleteOrder(order)
                 const isDeleting = deletingOrder === order.id
                 
@@ -377,8 +377,8 @@ const OrderManagement: React.FC = () => {
                         <div className="font-bold text-gray-900">
                           UGX {order.total_amount.toLocaleString()}
                         </div>
-                        <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.status)}`}>
-                          {order.status.replace('_', ' ').toUpperCase()}
+                        <span className={`inline-block px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(order.order_status)}`}>
+                          {order.order_status.replace('_', ' ').toUpperCase()}
                         </span>
                       </div>
                     </div>
@@ -503,9 +503,9 @@ const OrderManagement: React.FC = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredOrders.map((order) => {
-                  const nextStatuses = getNextStatusOptions(order.status, order.delivery_type)
+                  const nextStatuses = getNextStatusOptions(order.order_status, order.delivery_type)
                   const isUpdating = updatingStatus === order.id
-                  const canCancel = canCancelOrder(order.status)
+                  const canCancel = canCancelOrder(order.order_status)
                   const canDelete = canDeleteOrder(order)
                   const isDeleting = deletingOrder === order.id
                   
@@ -545,10 +545,10 @@ const OrderManagement: React.FC = () => {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <select
-                          value={order.status}
+                          value={order.order_status}
                           onChange={(e) => updateOrderStatus(order.id, e.target.value)}
                           disabled={updatingStatus === order.id}
-                          className={`px-2 py-1 text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.status)} focus:outline-none focus:ring-2 focus:ring-orange-500`}
+                          className={`px-2 py-1 text-xs leading-5 font-semibold rounded-full ${getStatusColor(order.order_status)} focus:outline-none focus:ring-2 focus:ring-orange-500`}
                         >
                           {statusOptions
                             .filter(option => option.value !== 'all')
@@ -637,7 +637,7 @@ const OrderManagement: React.FC = () => {
               <p className="text-sm text-gray-700 space-y-1">
                 <span className="block"><strong>Customer:</strong> {orderToDelete.customer_name}</span>
                 <span className="block"><strong>Total:</strong> UGX {orderToDelete.total_amount.toLocaleString()}</span>
-                <span className="block"><strong>Status:</strong> {orderToDelete.status.replace('_', ' ')}</span>
+                <span className="block"><strong>Status:</strong> {orderToDelete.order_status.replace('_', ' ')}</span>
                 <span className="block"><strong>Payment:</strong> {orderToDelete.payment_status}</span>
               </p>
             </div>
@@ -709,8 +709,8 @@ const OrderManagement: React.FC = () => {
                   <h3 className="text-lg font-semibold text-gray-900">Order Status</h3>
                   <div className="space-y-2">
                     <p><strong>Order Status:</strong> 
-                      <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedOrder.status)}`}>
-                        {selectedOrder.status.replace('_', ' ')}
+                      <span className={`ml-2 px-2 py-1 text-xs font-semibold rounded-full ${getStatusColor(selectedOrder.order_status)}`}>
+                        {selectedOrder.order_status.replace('_', ' ')}
                       </span>
                     </p>
                     <p><strong>Payment Status:</strong>
@@ -759,7 +759,7 @@ const OrderManagement: React.FC = () => {
               <div className="border-t pt-6">
                 <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
                 <div className="flex flex-wrap gap-2">
-                  {getNextStatusOptions(selectedOrder.status, selectedOrder.delivery_type).map((status) => (
+                  {getNextStatusOptions(selectedOrder.order_status, selectedOrder.delivery_type).map((status) => (
                     <button
                       key={status}
                       onClick={() => updateOrderStatus(selectedOrder.id, status)}
@@ -776,7 +776,7 @@ const OrderManagement: React.FC = () => {
                     </button>
                   ))}
                   
-                  {canCancelOrder(selectedOrder.status) && (
+                  {canCancelOrder(selectedOrder.order_status) && (
                     <button
                       onClick={() => updateOrderStatus(selectedOrder.id, 'cancelled')}
                       disabled={updatingStatus === selectedOrder.id}
@@ -801,7 +801,7 @@ const OrderManagement: React.FC = () => {
                   )}
 
                   <a
-                    href={`https://wa.me/${selectedOrder.phone_number.replace('+', '')}?text=Hi ${selectedOrder.customer_name}, your order #${selectedOrder.id.slice(0, 8)} is ${selectedOrder.status.replace('_', ' ')}.`}
+                    href={`https://wa.me/${selectedOrder.phone_number.replace('+', '')}?text=Hi ${selectedOrder.customer_name}, your order #${selectedOrder.id.slice(0, 8)} is ${selectedOrder.order_status.replace('_', ' ')}.`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 text-sm"

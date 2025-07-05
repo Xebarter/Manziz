@@ -30,7 +30,7 @@ export const updateStructuredData = (data: any) => {
 }
 
 export const createRestaurantStructuredData = (menuItem?: any) => {
-  return {
+  const baseData = {
     "@context": "https://schema.org",
     "@type": "Restaurant",
     "name": "Manziz Restaurant",
@@ -58,8 +58,14 @@ export const createRestaurantStructuredData = (menuItem?: any) => {
     "servesCuisine": ["Fast Food", "Ugandan", "International"],
     "priceRange": "$$",
     "acceptsReservations": true,
-    "hasMenu": "https://manziz-restaurant.vercel.app/menu",
-    ...(menuItem && {
+    "hasMenu": "https://manziz-restaurant.vercel.app/menu"
+  }
+
+  // If a specific menu item is provided, add detailed menu information
+  if (menuItem) {
+    return {
+      ...baseData,
+      "image": menuItem.image_url,
       "menu": {
         "@type": "Menu",
         "hasMenuSection": [
@@ -71,14 +77,26 @@ export const createRestaurantStructuredData = (menuItem?: any) => {
                 "@type": "MenuItem",
                 "name": menuItem.name,
                 "description": menuItem.description || `Delicious ${menuItem.name} from Manziz Restaurant`,
-                "image": menuItem.image_url
+                "image": menuItem.image_url,
+                "offers": {
+                  "@type": "Offer",
+                  "price": menuItem.price,
+                  "priceCurrency": "UGX",
+                  "availability": "https://schema.org/InStock"
+                },
+                "nutrition": {
+                  "@type": "NutritionInformation",
+                  "servingSize": "1 serving"
+                }
               }
             ]
           }
         ]
       }
-    })
+    }
   }
+
+  return baseData
 }
 
 export const updateAllMetaTags = (options: {
@@ -95,11 +113,29 @@ export const updateAllMetaTags = (options: {
     updateTitle(title)
   }
 
+  // Optimize image URL for social media (1200x630 is optimal for Facebook/Twitter)
+  const getOptimizedImageUrl = (imageUrl: string) => {
+    if (!imageUrl) return null
+    
+    // If it's a Pexels URL, optimize it for social media
+    if (imageUrl.includes('pexels.com')) {
+      const baseUrl = imageUrl.split('?')[0]
+      return `${baseUrl}?auto=compress&cs=tinysrgb&w=1200&h=630&fit=crop`
+    }
+    
+    return imageUrl
+  }
+
   // Update Open Graph meta tags
   if (image || menuItem?.image_url) {
-    const imageUrl = image || menuItem?.image_url
-    updateMetaTag('og:image', imageUrl)
-    updateMetaTag('og:image:alt', imageAlt || `Delicious ${menuItem?.name || 'food'} from Manziz Restaurant`)
+    const imageUrl = getOptimizedImageUrl(image || menuItem?.image_url)
+    if (imageUrl) {
+      updateMetaTag('og:image', imageUrl)
+      updateMetaTag('og:image:width', '1200')
+      updateMetaTag('og:image:height', '630')
+      updateMetaTag('og:image:alt', imageAlt || `Delicious ${menuItem?.name || 'food'} from Manziz Restaurant`)
+      updateMetaTag('og:image:type', 'image/jpeg')
+    }
   }
 
   if (title || menuItem?.name) {
@@ -116,9 +152,11 @@ export const updateAllMetaTags = (options: {
 
   // Update Twitter meta tags
   if (image || menuItem?.image_url) {
-    const imageUrl = image || menuItem?.image_url
-    updateMetaTag('twitter:image', imageUrl)
-    updateMetaTag('twitter:image:alt', imageAlt || `Delicious ${menuItem?.name || 'food'} from Manziz Restaurant`)
+    const imageUrl = getOptimizedImageUrl(image || menuItem?.image_url)
+    if (imageUrl) {
+      updateMetaTag('twitter:image', imageUrl)
+      updateMetaTag('twitter:image:alt', imageAlt || `Delicious ${menuItem?.name || 'food'} from Manziz Restaurant`)
+    }
   }
 
   // Update structured data

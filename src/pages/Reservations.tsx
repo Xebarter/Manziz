@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Calendar, Clock, Users, MessageSquare } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
+import { useMetaTags } from '../hooks/useMetaTags'
 
 const Reservations: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -13,6 +14,13 @@ const Reservations: React.FC = () => {
     specialRequest: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Set meta tags for the reservations page with featured menu item
+  useMetaTags({
+    title: 'Table Reservations - Manziz Restaurant',
+    description: 'Reserve your table at Manziz Restaurant in Kampala, Uganda. Book online for a delightful dining experience with fresh ingredients and fast service.',
+    useFirstMenuItem: true
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()

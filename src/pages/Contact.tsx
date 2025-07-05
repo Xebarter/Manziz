@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Phone, Mail, MapPin, MessageSquare, Clock, Send } from 'lucide-react'
 import { supabase } from '../lib/supabase'
 import toast from 'react-hot-toast'
+import { useMetaTags } from '../hooks/useMetaTags'
 
 const Contact: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -12,6 +13,13 @@ const Contact: React.FC = () => {
     message: ''
   })
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  // Set meta tags for the contact page with featured menu item
+  useMetaTags({
+    title: 'Contact Us - Manziz Restaurant',
+    description: 'Get in touch with Manziz Restaurant. Visit us in Kampala, Uganda or contact us via phone, WhatsApp, or social media. We\'d love to hear from you!',
+    useFirstMenuItem: true
+  })
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
