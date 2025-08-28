@@ -281,7 +281,7 @@ const Carousel: React.FC<CarouselProps> = ({
   }
 
   return (
-    <div className="relative w-full h-96 md:h-[500px] lg:h-[600px] overflow-hidden rounded-lg shadow-xl">
+    <div className="relative w-full h-screen overflow-hidden">
       {/* Carousel container */}
       <div
         className="relative w-full h-full"
@@ -296,91 +296,19 @@ const Carousel: React.FC<CarouselProps> = ({
               index === currentIndex ? 'opacity-100' : 'opacity-0'
             }`}
           >
-            {/* Background image */}
-            <img
-              src={item.image_url}
-              alt={item.name}
-              className="w-full h-full object-cover"
-              loading={index === currentIndex ? 'eager' : 'lazy'}
-              onError={(e) => {
-                (e.target as HTMLImageElement).src = 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=800'
+            <div 
+              className="w-full h-full bg-cover bg-center"
+              style={{ 
+                backgroundImage: `url(${item.image_url})`,
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                backgroundRepeat: 'no-repeat',
+                height: '100vh',
+                width: '100%'
               }}
             />
-            
-            {/* Overlay */}
-            {showOverlay && (
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent">
-                <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 text-white">
-                  <div className="max-w-2xl">
-                    <div className="flex items-center mb-2">
-                      <Star className="w-5 h-5 text-yellow-400 mr-2" />
-                      <span className="text-sm font-medium bg-yellow-500 text-black px-2 py-1 rounded-full">
-                        Featured
-                      </span>
-                    </div>
-                    <h3 className="text-2xl md:text-3xl lg:text-4xl font-bold mb-2">
-                      {item.name}
-                    </h3>
-                    <p className="text-sm md:text-base text-gray-200 mb-4 line-clamp-2">
-                      {item.description}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xl md:text-2xl font-bold text-yellow-400">
-                        UGX {item.price.toLocaleString()}
-                      </span>
-                      <button className="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-full font-medium transition-colors">
-                        Order Now
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            )}
           </div>
         ))}
-      </div>
-
-      {/* Navigation arrows */}
-      {showArrows && items.length > 1 && (
-        <>
-          <button
-            onClick={goToPrevious}
-            className="absolute left-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors z-10"
-            aria-label="Previous slide"
-          >
-            <ChevronLeft className="w-6 h-6" />
-          </button>
-          <button
-            onClick={goToNext}
-            className="absolute right-4 top-1/2 transform -translate-y-1/2 bg-black/50 hover:bg-black/70 text-white p-2 rounded-full transition-colors z-10"
-            aria-label="Next slide"
-          >
-            <ChevronRight className="w-6 h-6" />
-          </button>
-        </>
-      )}
-
-      {/* Dots indicator */}
-      {showDots && items.length > 1 && (
-        <div className="absolute bottom-4 left-1/2 transform -translate-x-1/2 flex space-x-2 z-10">
-          {items.map((_, index) => (
-            <button
-              key={index}
-              onClick={() => goToSlide(index)}
-              className={`w-3 h-3 rounded-full transition-colors ${
-                index === currentIndex
-                  ? 'bg-white'
-                  : 'bg-white/50 hover:bg-white/75'
-              }`}
-              aria-label={`Go to slide ${index + 1}`}
-            />
-          ))}
-        </div>
-      )}
-
-      {/* Slide counter */}
-      <div className="absolute top-4 right-4 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium z-10">
-        {currentIndex + 1} / {items.length}
       </div>
     </div>
   )

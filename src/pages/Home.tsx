@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ChefHat, Clock, Utensils, Star, ArrowRight, Crown, Sparkles } from 'lucide-react'
+import { ChefHat, Clock, Utensils, Star, ArrowRight, MapPin, Users, MessageCircle, Info, Sparkles } from 'lucide-react'
 import { MenuItem } from '../lib/supabase'
 import { supabase } from '../lib/supabase'
 import { useMetaTags } from '../hooks/useMetaTags'
@@ -9,6 +9,17 @@ import Carousel from '../components/Carousel'
 const Home: React.FC = () => {
   const [popularItems, setPopularItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [isScrolled, setIsScrolled] = useState(false)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY
+      setIsScrolled(offset > 100)
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   // Set meta tags for the home page with featured menu item
   useMetaTags({
@@ -131,92 +142,92 @@ const Home: React.FC = () => {
     }
   }
 
+  const navigation = [
+    { name: 'MENU', href: '/menu', icon: ChefHat },
+    { name: 'LOCATIONS', href: '/locations', icon: MapPin },
+    { name: 'CAREERS', href: '/careers', icon: Users },
+    { name: 'FEEDBACK', href: '/feedback', icon: MessageCircle },
+    { name: 'ABOUT US', href: '/about', icon: Info },
+  ]
+
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Hero Section with Full Screen Coverage */}
-      <section className="relative min-h-screen w-full">
-        {/* Carousel Background */}
-        <div className="absolute inset-0 w-full h-full">
-          <Carousel
-            autoPlay={true}
-            interval={5000}
-            showArrows={true}
-            showDots={true}
-            showOverlay={false}
-            maxItems={12}
-          />
-        </div>
-
-        {/* Luxury Gradient Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black/70"></div>
-
-        {/* Animated Sparkles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          <div className="absolute top-1/4 left-1/4 animate-pulse">
-            <Sparkles className="w-4 h-4 text-yellow-400 opacity-70" />
-          </div>
-          <div className="absolute top-1/3 right-1/3 animate-pulse delay-1000">
-            <Sparkles className="w-6 h-6 text-yellow-300 opacity-50" />
-          </div>
-          <div className="absolute bottom-1/3 left-1/6 animate-pulse delay-2000">
-            <Sparkles className="w-5 h-5 text-yellow-400 opacity-60" />
-          </div>
-        </div>
-
-        {/* Hero Content */}
-        <div className="relative z-20 min-h-screen flex items-center justify-center">
-          <div className="text-center text-white px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold mb-6 sm:mb-8 leading-tight">
-              Welcome to{' '}
-              <span className="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 bg-clip-text text-transparent">
+    <div className="min-h-screen bg-white">
+      {/* Hero Section */}
+      <section className="relative h-screen flex items-center justify-center overflow-hidden">
+        {/* Right Side Navigation - Hidden when scrolled */}
+        <nav className={`fixed right-0 top-0 h-full z-30 transition-transform duration-500 ease-in-out ${
+          isScrolled ? 'translate-x-full' : 'translate-x-0'
+        }`}>
+          <div className="h-full w-64 bg-black/15 backdrop-blur-sm flex flex-col">
+            {/* Brand Logo */}
+            <div className="p-8 pt-12 text-center">
+              <h1 className="text-5xl font-bold text-white mb-2 tracking-tight" style={{ 
+                fontFamily: "'Playfair Display', serif",
+                textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)'
+              }}>
                 Manziz
-              </span>
-            </h1>
-
-            <p className="text-base sm:text-lg md:text-xl lg:text-2xl mb-8 sm:mb-12 max-w-4xl mx-auto leading-relaxed text-gray-100 font-light">
-              A fast-food brand dedicated to bringing smiles through delightful tastes and aromas.
-              <span className="block mt-2">
-                Experience the perfect blend of flavor, quality, and convenience.
-              </span>
-            </p>
-
-            {/* Mobile-Optimized CTA Buttons */}
-            <div className="flex flex-col gap-4 justify-center items-center max-w-md mx-auto sm:flex-row sm:gap-6">
-              <Link
-                to="/menu"
-                className="group relative overflow-hidden w-full sm:w-auto bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white px-6 py-3 rounded-full font-semibold text-base sm:text-lg transition-all duration-300 transform hover:scale-105 shadow-2xl hover:shadow-orange-500/25 min-h-[56px] flex items-center justify-center"
-              >
-                <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
-                <span className="relative flex items-center justify-center space-x-2">
-                  <span>Order Now</span>
-                  <ArrowRight className="w-5 h-5 transform group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Link>
-
-              <Link
-                to="/menu"
-                className="w-full sm:w-auto bg-white/10 backdrop-blur-md border border-white/20 text-white px-6 py-3 rounded-full font-semibold text-base sm:text-lg hover:bg-white/20 hover:border-white/30 transition-all duration-300 transform hover:scale-105 min-h-[56px] flex items-center justify-center"
-              >
-                View Menu
-              </Link>
-
-              <Link
-                to="/reservations"
-                className="w-full sm:w-auto border-2 border-white text-white px-6 py-3 rounded-full font-semibold text-base sm:text-lg hover:bg-white hover:text-gray-900 transition-all duration-300 transform hover:scale-105 min-h-[56px] flex items-center justify-center"
-              >
-                Reserve Table
-              </Link>
+              </h1>
             </div>
 
-            {/* Scroll Indicator */}
-            <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2">
-              <div className="animate-bounce">
-                <div className="w-6 h-10 border-2 border-white/30 rounded-full flex justify-center">
-                  <div className="w-1 h-3 bg-white/60 rounded-full mt-2 animate-pulse"></div>
-                </div>
+            {/* Navigation Items */}
+            <div className="flex-1 px-6 flex flex-col justify-center">
+              <div className="space-y 1">
+                {navigation.map((item, index) => (
+                  <div key={item.name} className="relative group">
+                    <Link
+                      to={item.href}
+                      className="flex items-center justify-between py-4 px-4 transition-all duration-300 hover:bg-white/5"
+                    >
+                      <span 
+                        className="text-white text-lg font-semibold tracking-wider uppercase" 
+                        style={{ 
+                          fontFamily: "'Montserrat', sans-serif",
+                          textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)',
+                          letterSpacing: '0.15em'
+                        }}
+                      >
+                        {item.name}
+                      </span>
+                      <item.icon 
+                        className="w-5 h-5 text-white/80 group-hover:text-white transition-colors" 
+                        style={{ filter: 'drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8))', opacity: 0.8 }} 
+                      />
+                    </Link>
+                  </div>
+                ))}
               </div>
             </div>
+
+            {/* CTA Button */}
+            <div className="p-6">
+              <Link
+                to="/menu"
+                className="w-full flex items-center justify-center px-6 py-3 bg-white/10 backdrop-blur-md text-white text-lg font-light tracking-wider rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 group"
+                style={{ textShadow: '0 0 8px rgba(255, 255, 255, 0.3)' }}
+              >
+                <span className="group-hover:translate-x-1 transition-transform">Start Order</span>
+                <ArrowRight className="w-5 h-5 ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
+              </Link>
+            </div>
           </div>
+        </nav>
+
+        {/* Carousel */}
+        <div className="absolute inset-0 z-0">
+          <Carousel autoPlay={true} interval={5000} showArrows={false} showDots={false} showOverlay={false} />
+        </div>
+
+        {/* Dark overlay for better text visibility */}
+        <div className="absolute inset-0 bg-black/20 z-10"></div>
+        
+        {/* Center Start Order Button */}
+        <div className="absolute inset-0 flex items-center justify-center z-20">
+          <Link
+            to="/menu"
+            className="px-10 py-4 bg-red-600 hover:bg-red-700 text-white text-xl font-semibold tracking-wider rounded-full shadow-lg transform transition-all duration-300 hover:scale-105 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50"
+          >
+            START ORDER
+          </Link>
         </div>
       </section>
 
@@ -233,24 +244,19 @@ const Home: React.FC = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="group relative bg-white rounded-2xl p-6 sm:p-8 shadow-xl hover:shadow-2xl transition-all duration-500 transform hover:-translate-y-2 border border-gray-100">
-                <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-gradient-to-r from-orange-600 to-orange-500 rounded-full flex items-center justify-center shadow-lg group-hover:shadow-xl transition-shadow duration-300">
-                    <feature.icon className="w-7 h-7 sm:w-8 sm:h-8 text-white" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {features.map((feature, index) => {
+              const IconComponent = feature.icon
+              return (
+                <div key={index} className="text-center p-6 group hover:bg-white hover:shadow-xl rounded-xl transition-all duration-300">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-r from-orange-500 to-red-500 rounded-full mb-6 group-hover:scale-110 transition-transform duration-300">
+                    <IconComponent className="w-8 h-8 text-white" />
                   </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
+                  <p className="text-gray-600 leading-relaxed font-light">{feature.description}</p>
                 </div>
-                <div className="mt-6 sm:mt-8 text-center">
-                  <h3 className="text-lg sm:text-xl font-bold text-gray-900 mb-3 group-hover:text-orange-600 transition-colors duration-300">
-                    {feature.title}
-                  </h3>
-                  <p className="text-sm sm:text-base text-gray-600 leading-relaxed font-light">
-                    {feature.description}
-                  </p>
-                </div>
-              </div>
-            ))}
+              )
+            })}
           </div>
         </div>
       </section>

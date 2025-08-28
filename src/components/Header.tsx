@@ -9,11 +9,26 @@ const Header: React.FC = () => {
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false)
   const [cartItemCount, setCartItemCount] = useState(0)
   const [showCartAnimation, setShowCartAnimation] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
   const { getTotalItems } = useCart()
   const { user, isAuthenticated, logout } = useAuth()
   const location = useLocation()
   const menuRef = useRef<HTMLDivElement>(null)
   const userMenuRef = useRef<HTMLDivElement>(null)
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const offset = window.scrollY
+      if (offset > 100) {
+        setIsScrolled(true)
+      } else {
+        setIsScrolled(false)
+      }
+    }
+
+    window.addEventListener('scroll', handleScroll)
+    return () => window.removeEventListener('scroll', handleScroll)
+  }, [])
 
   const navigation = [
     { name: 'Home', href: '/' },
@@ -77,8 +92,14 @@ const Header: React.FC = () => {
     return `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase()
   }
 
+  if (!isScrolled) return null
+
   return (
-    <header className="bg-white shadow-lg sticky top-0 z-50 w-full">
+    <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50 transition-transform duration-300 transform-gpu" style={{
+      transform: isScrolled ? 'translateY(0)' : 'translateY(-100%)',
+      backdropFilter: 'blur(10px)',
+      backgroundColor: 'rgba(255, 255, 255, 0.95)'
+    }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
