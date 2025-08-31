@@ -92,23 +92,16 @@ const Header: React.FC = () => {
     return `${user.first_name.charAt(0)}${user.last_name.charAt(0)}`.toUpperCase()
   }
 
-  if (!isScrolled) return null
-
   return (
-    <header className="fixed top-0 left-0 right-0 bg-white shadow-md z-50 transition-transform duration-300 transform-gpu" style={{
+    <header className="fixed top-0 left-0 right-0 z-50 transition-all duration-300 transform-gpu" style={{
       transform: isScrolled ? 'translateY(0)' : 'translateY(-100%)',
-      backdropFilter: 'blur(10px)',
-      backgroundColor: 'rgba(255, 255, 255, 0.95)'
+      backgroundColor: 'rgba(0, 0, 0, 0.3)',
+      backdropFilter: 'blur(10px)'
     }}>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center space-x-2">
-            <div className="w-10 h-10 bg-gradient-to-r from-yellow-400 to-orange-500 rounded-full flex items-center justify-center">
-              <span className="text-white font-bold text-xl">M</span>
-            </div>
-            <span className="text-lg sm:text-2xl font-bold text-gray-900">Manziz</span>
-          </Link>
+          {/* Empty div to maintain flex spacing */}
+          <div></div>
 
           {/* Desktop Navigation */}
           <nav className="hidden lg:flex space-x-6 xl:space-x-8">
@@ -117,9 +110,10 @@ const Header: React.FC = () => {
                 key={item.name}
                 to={item.href}
                 className={`px-3 py-2 rounded-md text-sm font-medium transition-colors ${isActive(item.href)
-                    ? 'text-orange-600 bg-orange-50'
-                    : 'text-gray-700 hover:text-orange-600 hover:bg-orange-50'
+                    ? 'text-white font-semibold bg-white/20'
+                    : 'text-white/90 hover:bg-white/20 hover:text-white'
                   }`}
+                style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}
               >
                 {item.name}
               </Link>
@@ -132,21 +126,15 @@ const Header: React.FC = () => {
               href="https://wa.me/256784811208"
               target="_blank"
               rel="noopener noreferrer"
-              className="p-2 text-gray-700 hover:text-green-600 transition-colors"
+              className="p-2 text-white hover:text-white/80 transition-colors"
+              style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}
               title="WhatsApp"
             >
               <Phone className="w-5 h-5" />
             </a>
-            <Link
-              to="/chat"
-              className="p-2 text-gray-700 hover:text-orange-600 transition-colors"
-              title="Live Chat"
-            >
-              <MessageCircle className="w-5 h-5" />
-            </Link>
 
             {/* Cart */}
-            <Link to="/cart" className="relative p-2 text-gray-700 hover:text-orange-600 transition-colors">
+            <Link to="/cart" className="relative p-2 text-white hover:text-white/80 transition-colors" style={{ textShadow: '0 1px 3px rgba(0,0,0,0.5)' }}>
               <ShoppingCart className={`w-5 h-5 ${showCartAnimation ? 'scale-110' : ''}`} />
               {cartItemCount > 0 && (
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs rounded-full min-w-[20px] h-5 flex items-center justify-center font-bold">
@@ -182,13 +170,7 @@ const Header: React.FC = () => {
                 )}
               </div>
             ) : (
-              <Link
-                to="/login"
-                className="flex items-center space-x-1 sm:space-x-2 px-3 sm:px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700"
-              >
-                <User className="w-4 h-4" />
-                <span className="hidden sm:block">Sign In</span>
-              </Link>
+              <div></div>
             )}
 
             {/* Mobile menu toggle */}

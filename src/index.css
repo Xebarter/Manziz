@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Global font family */
+@layer base {
+  html {
+    font-family: 'Montserrat', sans-serif;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Playfair Display', serif;
+  }
+}
+
 /* Line clamp utilities for text truncation */
 .line-clamp-1 {
   overflow: hidden;

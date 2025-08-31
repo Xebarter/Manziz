@@ -143,11 +143,11 @@ const Home: React.FC = () => {
   }
 
   const navigation = [
-    { name: 'MENU', href: '/menu', icon: ChefHat },
-    { name: 'LOCATIONS', href: '/locations', icon: MapPin },
-    { name: 'CAREERS', href: '/careers', icon: Users },
-    { name: 'FEEDBACK', href: '/feedback', icon: MessageCircle },
-    { name: 'ABOUT US', href: '/about', icon: Info },
+    { name: 'HOME', href: '/', icon: null },
+    { name: 'MENU', href: '/menu', icon: null },
+    { name: 'RESERVATIONS', href: '/reservations', icon: null },
+    { name: 'MY ORDERS', href: '/orders', icon: null },
+    { name: 'CONTACTS', href: '/contacts', icon: null },
   ]
 
   return (
@@ -183,15 +183,18 @@ const Home: React.FC = () => {
                         style={{ 
                           fontFamily: "'Montserrat', sans-serif",
                           textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)',
-                          letterSpacing: '0.15em'
+                          letterSpacing: '0.15em',
+                          padding: '0.5rem 0'
                         }}
                       >
                         {item.name}
                       </span>
-                      <item.icon 
-                        className="w-5 h-5 text-white/80 group-hover:text-white transition-colors" 
-                        style={{ filter: 'drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8))', opacity: 0.8 }} 
-                      />
+                      {item.icon && (
+                        <item.icon 
+                          className="w-5 h-5 text-white/80 group-hover:text-white transition-colors" 
+                          style={{ filter: 'drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8))', opacity: 0.8 }} 
+                        />
+                      )}
                     </Link>
                   </div>
                 ))}
