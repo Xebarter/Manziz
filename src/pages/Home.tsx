@@ -147,7 +147,7 @@ const Home: React.FC = () => {
     { name: 'MENU', href: '/menu', icon: null },
     { name: 'RESERVATIONS', href: '/reservations', icon: null },
     { name: 'MY ORDERS', href: '/orders', icon: null },
-    { name: 'CONTACTS', href: '/contacts', icon: null },
+    { name: 'CONTACT', href: '/contact', icon: null },
   ]
 
   return (
