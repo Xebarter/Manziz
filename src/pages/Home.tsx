@@ -10,15 +10,31 @@ const Home: React.FC = () => {
   const [popularItems, setPopularItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
   const [isScrolled, setIsScrolled] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(false)
 
+  // Toggle menu on small screens when clicking outside
   useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      const nav = document.querySelector('nav')
+      const isSmallScreen = window.innerWidth < 1024 // lg breakpoint
+      
+      if (isSmallScreen && nav && !nav.contains(e.target as Node)) {
+        setIsMenuOpen(prev => !prev)
+      }
+    }
+
     const handleScroll = () => {
       const offset = window.scrollY
       setIsScrolled(offset > 100)
     }
 
     window.addEventListener('scroll', handleScroll)
-    return () => window.removeEventListener('scroll', handleScroll)
+    document.addEventListener('click', handleClickOutside)
+    
+    return () => {
+      window.removeEventListener('scroll', handleScroll)
+      document.removeEventListener('click', handleClickOutside)
+    }
   }, [])
 
   // Set meta tags for the home page with featured menu item
@@ -144,7 +160,7 @@ const Home: React.FC = () => {
 
   const navigation = [
     { name: 'MENU', href: '/menu', icon: Utensils },
-    { name: 'RESERVATIONS', href: '/reservations', icon: Clock },
+    { name: 'RESERVE', href: '/reservations', icon: Clock },
     { name: 'MY ORDERS', href: '/orders', icon: List },
     { name: 'ABOUT US', href: '/about', icon: Info },
     { name: 'CONTACT', href: '/contact', icon: MessageCircle },
@@ -155,12 +171,24 @@ const Home: React.FC = () => {
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         {/* Right Side Navigation - Hidden when scrolled */}
-        <nav className={`fixed right-0 top-0 h-full z-30 transition-transform duration-500 ease-in-out ${
-          isScrolled ? 'translate-x-full' : 'translate-x-0'
-        }`}>
-          <div className="h-full w-64 bg-black/15 backdrop-blur-sm flex flex-col">
+        <nav 
+          className={`fixed right-0 top-0 h-full z-30 transition-transform duration-500 ease-in-out ${
+            isScrolled || (window.innerWidth < 1024 && !isMenuOpen) ? 'translate-x-full' : 'translate-x-0'
+          }`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="h-full w-72 flex flex-col relative">
+            {/* Convex lens effect */}
+            <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-black/10 to-black/20 rounded-l-3xl backdrop-blur-[3px]" 
+                 style={{
+                   maskImage: 'radial-gradient(ellipse at 30% 50%, white, transparent 70%)',
+                   WebkitMaskImage: 'radial-gradient(ellipse at 30% 50%, white, transparent 70%)',
+                   width: '110%',
+                   right: '-10%'
+                 }}>
+            </div>
             {/* Brand Logo */}
-            <div className="p-8 pt-12 text-center">
+            <div className="p-8 pt-12 text-center relative z-10">
               <h1 className="text-5xl font-bold text-white mb-2 tracking-tight" style={{ 
                 fontFamily: "'Playfair Display', serif",
                 textShadow: '2px 2px 4px rgba(0, 0, 0, 0.5)'
@@ -170,46 +198,57 @@ const Home: React.FC = () => {
             </div>
 
             {/* Navigation Items */}
-            <div className="flex-1 px-6 flex flex-col justify-center">
-              <div className="space-y 1">
+            <div className="flex-1 flex flex-col justify-center relative z-10">
+              <div className="space-y-0">
                 {navigation.map((item, index) => (
                   <div key={item.name} className="relative group">
+                    <div className="h-[1px] bg-white/40 w-4/5 mx-auto"></div>
                     <Link
                       to={item.href}
-                      className="flex items-center justify-between py-4 px-4 transition-all duration-300 hover:bg-white/5"
+                      className="flex items-center justify-start py-4 px-8 transition-all duration-300 hover:bg-white/10 gap-4"
                     >
+                      {item.icon && (
+                        <item.icon 
+                          className="w-5 h-5 text-white/80 group-hover:text-white transition-colors flex-shrink-0" 
+                          style={{ filter: 'drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8))', opacity: 0.8 }} 
+                        />
+                      )}
                       <span 
-                        className="text-white text-lg font-semibold tracking-wider uppercase" 
+                        className="text-white text-xl font-semibold tracking-wider uppercase" 
                         style={{ 
                           fontFamily: "'Montserrat', sans-serif",
                           textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)',
                           letterSpacing: '0.15em',
-                          padding: '0.5rem 0'
+                          padding: '0.1rem 0'
                         }}
                       >
                         {item.name}
                       </span>
-                      {item.icon && (
-                        <item.icon 
-                          className="w-5 h-5 text-white/80 group-hover:text-white transition-colors" 
-                          style={{ filter: 'drop-shadow(1px 1px 2px rgba(0, 0, 0, 0.8))', opacity: 0.8 }} 
-                        />
-                      )}
                     </Link>
                   </div>
                 ))}
+                <div className="h-[1px] bg-white/40 w-4/5 mx-auto"></div>
               </div>
             </div>
 
             {/* CTA Button */}
-            <div className="p-6">
+            <div className="px-8 pb-8 pt-3 relative z-10">
               <Link
                 to="/menu"
-                className="w-full flex items-center justify-center px-6 py-3 bg-white/10 backdrop-blur-md text-white text-lg font-light tracking-wider rounded-full border border-white/20 hover:bg-white/20 transition-all duration-300 group"
-                style={{ textShadow: '0 0 8px rgba(255, 255, 255, 0.3)' }}
+                className="w-full flex items-center justify-center px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-xl hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-300 group relative overflow-hidden"
               >
-                <span className="group-hover:translate-x-1 transition-transform">Start Order</span>
-                <ArrowRight className="w-5 h-5 ml-2 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all duration-300" />
+                {/* Shine effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
+                
+                <div className="flex flex-col items-center justify-center relative z-10">
+                  <span className="text-xl font-semibold tracking-wide whitespace-nowrap drop-shadow-sm">AYaaZ BBQ Pit</span>
+                  <span className="text-xs font-medium tracking-wider text-white/90 group-hover:text-white transition-colors duration-300 mt-0.5">By Manziz</span>
+                </div>
+                
+                <ArrowRight className="w-5 h-5 ml-4 -mr-2 group-hover:translate-x-1 transition-transform duration-300" />
+                
+                {/* Subtle border highlight */}
+                <div className="absolute inset-0 rounded-xl border-2 border-white/10 group-hover:border-white/20 transition-colors duration-300" />
               </Link>
             </div>
           </div>
@@ -279,11 +318,11 @@ const Home: React.FC = () => {
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-6 leading-tight flex items-center justify-center">
               <Star className="w-8 h-8 sm:w-10 sm:h-10 text-yellow-500 mr-3" />
               <span className="bg-gradient-to-r from-yellow-400 to-orange-300 bg-clip-text text-transparent">
-                Popular Dishes
+                AYaaZ BBQ PIT (By Manziz)
               </span>
             </h2>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-light">
-              Taste the favorites that keep our customers coming back
+            Mouthwatering barbecue, grilled to perfection and packed with flavor
             </p>
           </div>
 
