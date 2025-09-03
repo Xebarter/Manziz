@@ -172,7 +172,7 @@ const Home: React.FC = () => {
   const navigation = [
     { name: 'MENU', href: '/menu', icon: Utensils },
     { name: 'RESERVE', href: '/reservations', icon: Clock },
-    { name: 'MY ORDERS', href: '/orders', icon: List },
+    { name: 'MY ORDERS', href: '/my-orders', icon: List },
     { name: 'ABOUT US', href: '/about', icon: Info },
     { name: 'CONTACT', href: '/contact', icon: MessageCircle },
   ]
