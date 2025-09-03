@@ -10,31 +10,42 @@ const Home: React.FC = () => {
   const [popularItems, setPopularItems] = useState<MenuItem[]>([])
   const [loading, setLoading] = useState(true)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isMenuOpen, setIsMenuOpen] = useState(false)
+  const [isMenuOpen, setIsMenuOpen] = useState(true)
 
   // Toggle menu on small screens when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
+  const handleHeroClick = (e: React.MouseEvent) => {
+    if (window.innerWidth < 1024) { // lg breakpoint
       const nav = document.querySelector('nav')
-      const isSmallScreen = window.innerWidth < 1024 // lg breakpoint
-      
-      if (isSmallScreen && nav && !nav.contains(e.target as Node)) {
+      if (nav && !nav.contains(e.target as Node)) {
         setIsMenuOpen(prev => !prev)
       }
     }
+  }
 
+  // Close menu on route change (when clicking a link)
+  useEffect(() => {
+    const handleRouteChange = () => {
+      if (window.innerWidth < 1024) {
+        setIsMenuOpen(false)
+      }
+    }
+    window.addEventListener('popstate', handleRouteChange)
+    return () => window.removeEventListener('popstate', handleRouteChange)
+  }, [])
+
+  // Show menu on page load
+  useEffect(() => {
+    setIsMenuOpen(true)
+  }, [])
+
+  useEffect(() => {
     const handleScroll = () => {
       const offset = window.scrollY
       setIsScrolled(offset > 100)
     }
 
     window.addEventListener('scroll', handleScroll)
-    document.addEventListener('click', handleClickOutside)
-    
-    return () => {
-      window.removeEventListener('scroll', handleScroll)
-      document.removeEventListener('click', handleClickOutside)
-    }
+    return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
   // Set meta tags for the home page with featured menu item
@@ -169,14 +180,14 @@ const Home: React.FC = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        {/* Right Side Navigation - Hidden when scrolled */}
-        <nav 
-          className={`fixed right-0 top-0 h-full z-30 transition-transform duration-500 ease-in-out ${
-            isScrolled || (window.innerWidth < 1024 && !isMenuOpen) ? 'translate-x-full' : 'translate-x-0'
-          }`}
-          onClick={(e) => e.stopPropagation()}
-        >
+      <section 
+        className="relative h-screen flex items-center justify-center overflow-hidden"
+        onClick={handleHeroClick}
+      >
+        {/* Right Side Navigation - Hidden when scrolled or toggled off on mobile */}
+        <nav className={`fixed right-0 top-0 h-full z-30 transition-transform duration-500 ease-in-out ${
+          isScrolled || (window.innerWidth < 1024 && !isMenuOpen) ? 'translate-x-full' : 'translate-x-0'
+        }`}>
           <div className="h-full w-72 flex flex-col relative">
             {/* Convex lens effect */}
             <div className="absolute inset-0 bg-gradient-to-br from-black/20 via-black/10 to-black/20 rounded-l-3xl backdrop-blur-[3px]" 
