@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { ChefHat, Clock, Utensils, Star, ArrowRight, MapPin, Users, MessageCircle, Info, Sparkles } from 'lucide-react'
+import { ChefHat, Clock, Utensils, Star, ArrowRight, MapPin, Users, MessageCircle, Info, Sparkles, List } from 'lucide-react'
 import { MenuItem } from '../lib/supabase'
 import { supabase } from '../lib/supabase'
 import { useMetaTags } from '../hooks/useMetaTags'
@@ -143,11 +143,11 @@ const Home: React.FC = () => {
   }
 
   const navigation = [
-    { name: 'HOME', href: '/', icon: null },
-    { name: 'MENU', href: '/menu', icon: null },
-    { name: 'RESERVATIONS', href: '/reservations', icon: null },
-    { name: 'MY ORDERS', href: '/orders', icon: null },
-    { name: 'CONTACT', href: '/contact', icon: null },
+    { name: 'MENU', href: '/menu', icon: Utensils },
+    { name: 'RESERVATIONS', href: '/reservations', icon: Clock },
+    { name: 'MY ORDERS', href: '/orders', icon: List },
+    { name: 'ABOUT US', href: '/about', icon: Info },
+    { name: 'CONTACT', href: '/contact', icon: MessageCircle },
   ]
 
   return (

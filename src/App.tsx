@@ -10,6 +10,7 @@ import Cart from './pages/Cart'
 import Reservations from './pages/Reservations'
 import MyOrders from './pages/MyOrders'
 import Contact from './pages/Contact'
+import About from './pages/About'
 import Login from './pages/Login'
 import Register from './pages/Register'
 import Profile from './pages/Profile'
@@ -68,6 +69,7 @@ function App() {
             <Route path="cart" element={<Cart />} />
             <Route path="reservations" element={<Reservations />} />
             <Route path="my-orders" element={<MyOrders />} />
+            <Route path="about" element={<About />} />
             <Route path="contact" element={<Contact />} />
             <Route path="chat" element={<Chat />} />
             <Route path="profile" element={<Profile />} />
