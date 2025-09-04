@@ -255,8 +255,20 @@ const Cart: React.FC = () => {
                       />
                       
                       <div className="flex-1">
-                        <h3 className="text-lg font-semibold text-gray-900">{item.menu_item.name}</h3>
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-lg font-semibold text-gray-900">{item.menu_item.name}</h3>
+                          {item.menu_item.tags?.includes('Pre-Order') && (
+                            <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
+                              Pre-Order
+                            </span>
+                          )}
+                        </div>
                         <p className="text-gray-600">{item.menu_item.description}</p>
+                        {item.menu_item.tags?.includes('Pre-Order') && (
+                          <p className="text-sm text-green-600 font-medium mt-1">
+                            Pre-Orders: Ready within 24 hours after payment
+                          </p>
+                        )}
                         {item.notes && (
                           <p className="text-sm text-gray-500 mt-1">Note: {item.notes}</p>
                         )}

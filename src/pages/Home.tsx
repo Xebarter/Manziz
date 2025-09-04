@@ -87,7 +87,7 @@ const Home: React.FC = () => {
       const { data, error } = await supabase
         .from('menu_items')
         .select('*')
-        .contains('tags', ['popular'])
+        .contains('tags', ['AYaaZ BBQ'])
         .eq('is_available', true)
         .limit(6)
 
@@ -333,7 +333,7 @@ const Home: React.FC = () => {
               </span>
             </h2>
             <p className="text-lg sm:text-xl md:text-2xl text-gray-300 max-w-3xl mx-auto leading-relaxed font-light">
-            Mouthwatering barbecue, grilled to perfection and packed with flavor
+              Mouthwatering barbecue, grilled to perfection and packed with flavor. Our AYaaZ BBQ PIT selection features the finest grilled meats and sides.
             </p>
           </div>
 

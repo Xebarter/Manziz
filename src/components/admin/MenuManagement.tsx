@@ -25,8 +25,8 @@ const MenuManagement: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   // Updated categories as requested
-  const categories = ['rolex', 'chicken', 'pork', 'beef', 'drinks', 'desserts', 'salad']
-  const availableTags = ['spicy', 'vegetarian', 'vegan', 'gluten-free', 'popular', 'new', 'signature', 'local', 'grilled', 'fresh', 'healthy', 'crispy']
+  const categories = ['rolex', 'chicken', 'pork', 'beef', 'drinks', 'desserts', 'salad', 'goat', 'sausage']
+  const availableTags = ['AYaaZ BBQ', 'Pre-Order', 'spicy', 'vegetarian', 'vegan', 'gluten-free', 'popular', 'new', 'signature', 'local', 'grilled', 'fresh', 'healthy', 'crispy', 'smoked']
 
   // Quick add presets for common items
   const quickPresets = [
