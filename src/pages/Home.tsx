@@ -244,9 +244,16 @@ const Home: React.FC = () => {
 
             {/* CTA Button */}
             <div className="px-8 pb-8 pt-3 relative z-10">
-              <Link
-                to="/menu"
-                className="w-full flex items-center justify-center px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-xl hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-300 group relative overflow-hidden"
+              <a
+                href="#ayaaz-bbq-pit"
+                className="w-full flex items-center justify-center px-10 py-4 bg-gradient-to-r from-orange-500 to-red-600 text-white rounded-xl hover:shadow-lg hover:shadow-orange-500/30 transition-all duration-300 group relative overflow-hidden cursor-pointer"
+                onClick={(e) => {
+                  e.preventDefault();
+                  const element = document.getElementById('ayaaz-bbq-pit');
+                  if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                  }
+                }}
               >
                 {/* Shine effect */}
                 <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700" />
@@ -260,7 +267,7 @@ const Home: React.FC = () => {
                 
                 {/* Subtle border highlight */}
                 <div className="absolute inset-0 rounded-xl border-2 border-white/10 group-hover:border-white/20 transition-colors duration-300" />
-              </Link>
+              </a>
             </div>
           </div>
         </nav>
@@ -315,7 +322,7 @@ const Home: React.FC = () => {
       </section>
 
       {/* Featured Menu Preview - Premium */}
-      <section className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 to-black text-white relative overflow-hidden">
+      <section id="ayaaz-bbq-pit" className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 to-black text-white relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
           <div className="absolute inset-0" style={{

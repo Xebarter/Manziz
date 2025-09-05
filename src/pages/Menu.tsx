@@ -37,7 +37,7 @@ const Menu: React.FC = () => {
 
   // Updated categories to match the new structure
   const categories = ['all', 'rolex', 'chicken', 'pork', 'beef', 'drinks', 'desserts', 'salad']
-  const tags = ['spicy', 'vegetarian', 'vegan', 'gluten-free', 'popular', 'new']
+  const tags = ['AYaaZ BBQ', 'popular', 'new']
 
   useEffect(() => {
     fetchMenuItems()
@@ -305,7 +305,7 @@ const Menu: React.FC = () => {
 
             {/* Tags */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Dietary Preferences</label>
+              <label className="block text-sm font-medium text-gray-700 mb-2">Preferences</label>
               <div className="flex flex-wrap gap-2">
                 {tags.map(tag => (
                   <button
