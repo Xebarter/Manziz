@@ -246,59 +246,94 @@ const Cart: React.FC = () => {
               
               <div className="divide-y divide-gray-200">
                 {cart.map((item) => (
-                  <div key={item.menu_item.id} className="p-6">
-                    <div className="flex items-center space-x-4">
-                      <img
-                        src={item.menu_item.image_url || 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=200'}
-                        alt={item.menu_item.name}
-                        className="w-16 h-16 object-cover rounded-lg"
-                      />
+                  <div key={item.menu_item.id} className="p-4 md:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-start gap-4">
+                      {/* Image - Full width on mobile, smaller on desktop */}
+                      <div className="w-full sm:w-32 lg:w-40 h-40 sm:h-32 lg:h-36 overflow-hidden rounded-lg bg-gray-100">
+                        <img
+                          src={item.menu_item.image_url || 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=800'}
+                          alt={item.menu_item.name}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+                          loading="lazy"
+                        />
+                      </div>
                       
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-lg font-semibold text-gray-900">{item.menu_item.name}</h3>
-                          {item.menu_item.tags?.includes('Pre-Order') && (
-                            <span className="text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
-                              Pre-Order
-                            </span>
-                          )}
+                      {/* Content */}
+                      <div className="flex-1 min-w-0">
+                        {/* Header with title and price */}
+                        <div className="flex items-start justify-between gap-2">
+                          <div className="min-w-0">
+                            <h3 className="text-lg font-semibold text-gray-900 truncate">
+                              {item.menu_item.name}
+                            </h3>
+                            {item.menu_item.tags?.includes('Pre-Order') && (
+                              <span className="inline-block mt-1 text-xs font-medium bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
+                                Pre-Order
+                              </span>
+                            )}
+                          </div>
+                          <p className="text-lg font-bold text-orange-600 whitespace-nowrap ml-2">
+                            UGX {item.menu_item.price.toLocaleString()}
+                          </p>
                         </div>
-                        <p className="text-gray-600">{item.menu_item.description}</p>
-                        {item.menu_item.tags?.includes('Pre-Order') && (
-                          <p className="text-sm text-green-600 font-medium mt-1">
-                            Pre-Orders: Ready within 24 hours after payment
+
+                        {/* Description */}
+                        {item.menu_item.description && (
+                          <p className="mt-2 text-sm text-gray-600 line-clamp-2">
+                            {item.menu_item.description}
                           </p>
                         )}
-                        {item.notes && (
-                          <p className="text-sm text-gray-500 mt-1">Note: {item.notes}</p>
+
+                        {/* Pre-order notice */}
+                        {item.menu_item.tags?.includes('Pre-Order') && (
+                          <p className="mt-2 text-xs text-green-600 font-medium">
+                            <span className="inline-flex items-center">
+                              <svg className="w-3.5 h-3.5 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                              </svg>
+                              Ready within 24 hours after payment
+                            </span>
+                          </p>
                         )}
-                        <p className="text-lg font-bold text-orange-600 mt-2">
-                          UGX {item.menu_item.price.toLocaleString()}
-                        </p>
-                      </div>
 
-                      <div className="flex items-center space-x-2">
-                        <button
-                          onClick={() => updateQuantity(item.menu_item.id, item.quantity - 1)}
-                          className="p-1 rounded-full border border-gray-300 hover:bg-gray-100"
-                        >
-                          <Minus className="w-4 h-4" />
-                        </button>
-                        <span className="w-8 text-center">{item.quantity}</span>
-                        <button
-                          onClick={() => updateQuantity(item.menu_item.id, item.quantity + 1)}
-                          className="p-1 rounded-full border border-gray-300 hover:bg-gray-100"
-                        >
-                          <Plus className="w-4 h-4" />
-                        </button>
-                      </div>
+                        {/* Notes */}
+                        {item.notes && (
+                          <div className="mt-2 flex items-start">
+                            <span className="text-xs text-gray-500 bg-gray-50 px-2 py-1 rounded">
+                              <span className="font-medium">Note:</span> {item.notes}
+                            </span>
+                          </div>
+                        )}
 
-                      <button
-                        onClick={() => removeFromCart(item.menu_item.id)}
-                        className="p-2 text-red-600 hover:bg-red-50 rounded-full"
-                      >
-                        <Trash2 className="w-5 h-5" />
-                      </button>
+                        {/* Quantity controls and remove button */}
+                        <div className="mt-4 flex items-center justify-between">
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() => updateQuantity(item.menu_item.id, item.quantity - 1)}
+                              className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 transition-colors"
+                              aria-label="Decrease quantity"
+                            >
+                              <Minus className="w-4 h-4" />
+                            </button>
+                            <span className="w-8 text-center font-medium">{item.quantity}</span>
+                            <button
+                              onClick={() => updateQuantity(item.menu_item.id, item.quantity + 1)}
+                              className="p-2 rounded-full border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-1 transition-colors"
+                              aria-label="Increase quantity"
+                            >
+                              <Plus className="w-4 h-4" />
+                            </button>
+                          </div>
+                          
+                          <button
+                            onClick={() => removeFromCart(item.menu_item.id)}
+                            className="p-2 text-red-600 hover:bg-red-50 rounded-full focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-1 transition-colors"
+                            aria-label="Remove item"
+                          >
+                            <Trash2 className="w-5 h-5" />
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 ))}

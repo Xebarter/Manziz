@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Search, Filter, Plus, Minus, ShoppingCart, X, ZoomIn, Share2 } from 'lucide-react'
+import MenuItemPreview from '../components/MenuItemPreview'
 import { MenuItem } from '../lib/supabase'
 import { supabase } from '../lib/supabase'
 import { useCart } from '../hooks/useCart'
@@ -20,6 +21,8 @@ const Menu: React.FC = () => {
   const [zoomedImage, setZoomedImage] = useState<{ url: string; name: string } | null>(null)
   const [highlightedItem, setHighlightedItem] = useState<string | null>(null)
   const [selectedMenuItem, setSelectedMenuItem] = useState<MenuItem | null>(null)
+  const [previewItem, setPreviewItem] = useState<MenuItem | null>(null)
+  const [quantity, setQuantity] = useState(1)
   
   const { addToCart } = useCart()
   const { isAuthenticated } = useAuth()
@@ -266,6 +269,27 @@ const Menu: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        {/* Menu Item Preview Modal */}
+        {previewItem && (
+          <div className="fixed inset-0 z-50">
+            <MenuItemPreview
+              item={previewItem}
+              onClose={() => setPreviewItem(null)}
+              onAddToCart={(item, qty) => {
+                addToCart({
+                  menu_item: item,
+                  quantity: qty,
+                  notes: notes[item.id] || ''
+                })
+                toast.success(`${item.name} added to cart!`)
+                setPreviewItem(null)
+              }}
+              quantity={quantity}
+              onQuantityChange={setQuantity}
+            />
+          </div>
+        )}
+
         {/* Header */}
         <div className="text-center mb-12">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">Our Menu</h1>
@@ -325,63 +349,85 @@ const Menu: React.FC = () => {
           </div>
         </div>
 
+        {/* Menu Item Preview Modal */}
+        {previewItem && (
+          <div className="fixed inset-0 z-50">
+            <MenuItemPreview
+              item={previewItem}
+              onClose={() => setPreviewItem(null)}
+              onAddToCart={(item, qty) => {
+                addToCart({
+                  menu_item: item,
+                  quantity: qty,
+                  notes: notes[item.id] || ''
+                })
+                toast.success(`${item.name} added to cart!`)
+                setPreviewItem(null)
+              }}
+              quantity={quantity}
+              onQuantityChange={setQuantity}
+            />
+          </div>
+        )}
+
         {/* Menu Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {filteredItems.map(item => (
             <div 
               key={item.id} 
               id={`menu-item-${item.id}`}
-              className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 ${
+              className={`bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all duration-300 cursor-pointer ${
                 highlightedItem === item.id 
                   ? 'ring-4 ring-orange-400 ring-opacity-75 shadow-xl transform scale-105' 
                   : ''
               }`}
+              onClick={(e) => {
+                // Don't trigger preview if clicking on buttons or interactive elements
+                const target = e.target as HTMLElement;
+                if (!target.closest('button') && !target.closest('a') && target.tagName !== 'INPUT' && target.tagName !== 'TEXTAREA') {
+                  setPreviewItem(item);
+                  setQuantity(quantities[item.id] || 1);
+                }
+              }}
             >
               <div className="relative group">
                 <img
                   src={getOptimizedImageUrl(item.image_url, 'medium')}
                   alt={item.name}
-                  className="w-full h-48 object-cover cursor-pointer transition-transform duration-300 group-hover:scale-105"
-                  onClick={() => handleImageClick(getOptimizedImageUrl(item.image_url, 'large'), item.name)}
+                  className="w-full h-48 object-cover"
                   onError={(e) => {
-                    (e.target as HTMLImageElement).src = getOptimizedImageUrl('', 'medium')
+                    (e.target as HTMLImageElement).src = getOptimizedImageUrl('', 'medium');
                   }}
                   loading="lazy"
                 />
                 
-                {/* Zoom indicator */}
-                <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all duration-300 flex items-center justify-center">
-                  <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-white bg-opacity-90 rounded-full p-3">
-                    <ZoomIn className="w-6 h-6 text-gray-800" />
-                  </div>
-                </div>
-                
                 {/* Tags */}
-                <div className="absolute top-4 left-4 flex flex-wrap gap-1">
-                  {item.tags.map(tag => (
-                    <span key={tag} className={`px-2 py-1 rounded-full text-xs font-medium ${
-                      tag === 'popular' 
-                        ? 'bg-yellow-500 text-white' 
-                        : 'bg-orange-600 text-white'
-                    }`}>
+                <div className="absolute top-2 left-2 flex flex-wrap gap-1">
+                  {item.tags?.map(tag => (
+                    <span 
+                      key={tag} 
+                      className={`px-2 py-1 rounded-full text-xs font-medium ${
+                        tag === 'popular' ? 'bg-yellow-500' : 'bg-orange-600'
+                      } text-white`}
+                    >
                       {tag}
                     </span>
                   ))}
                 </div>
 
-                {/* Action buttons */}
-                <div className="absolute top-4 right-4 flex flex-col space-y-2">
+                {/* Action Buttons */}
+                <div className="absolute top-2 right-2 flex flex-col gap-2">
                   <FavoriteButton 
                     item={item} 
-                    className="shadow-lg"
+                    className="bg-white/90 hover:bg-white" 
                     showLoginPrompt={!isAuthenticated}
                   />
                   <button
                     onClick={(e) => {
-                      e.stopPropagation()
-                      shareMenuItem(item)
+                      e.stopPropagation();
+                      shareMenuItem(item);
                     }}
-                    className="bg-white bg-opacity-90 hover:bg-opacity-100 rounded-full p-2 transition-all duration-200 shadow-md hover:shadow-lg"
+                    className="p-2 bg-white/90 hover:bg-white rounded-full shadow-md transition-all"
                     title="Share this item"
                   >
                     <Share2 className="w-4 h-4 text-gray-700" />
@@ -389,62 +435,56 @@ const Menu: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-6">
-                <div className="flex justify-between items-start mb-3">
-                  <h3 className="text-lg lg:text-xl font-semibold text-gray-900 truncate flex-1 mr-3">{item.name}</h3>
-                  <span className="text-lg lg:text-xl font-bold text-orange-600 whitespace-nowrap">
+              <div className="p-4">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="text-lg font-semibold text-gray-900 flex-1 mr-2">{item.name}</h3>
+                  <span className="text-lg font-bold text-orange-600 whitespace-nowrap">
                     UGX {item.price.toLocaleString()}
                   </span>
                 </div>
-                <p className="text-gray-600 text-sm lg:text-base mb-4 line-clamp-2">{item.description}</p>
                 
-                <div className="flex justify-between items-center text-sm lg:text-base mb-4">
-                  <span className="text-gray-500 capitalize font-medium">{item.category}</span>
-                  <span className="px-3 py-1 bg-green-100 text-green-800 text-xs lg:text-sm font-medium rounded-full">
+                <p className="text-gray-600 text-sm mb-3 line-clamp-2">{item.description}</p>
+                
+                <div className="flex justify-between items-center">
+                  <span className="text-sm text-gray-500 capitalize">{item.category}</span>
+                  <span className="px-2 py-1 bg-green-100 text-green-800 text-xs font-medium rounded-full">
                     Available
                   </span>
                 </div>
 
-                <div className="space-y-4">
-                  {/* Quantity Selector */}
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm font-medium text-gray-700">Quantity:</span>
-                    <div className="flex items-center space-x-2">
-                      <button
-                        onClick={() => handleQuantityChange(item.id, (quantities[item.id] || 1) - 1)}
-                        className="p-1 rounded-full border border-gray-300 hover:bg-gray-100"
-                        disabled={!quantities[item.id] || quantities[item.id] <= 1}
-                      >
-                        <Minus className="w-4 h-4" />
-                      </button>
-                      <span className="w-8 text-center">{quantities[item.id] || 1}</span>
-                      <button
-                        onClick={() => handleQuantityChange(item.id, (quantities[item.id] || 1) + 1)}
-                        className="p-1 rounded-full border border-gray-300 hover:bg-gray-100"
-                      >
-                        <Plus className="w-4 h-4" />
-                      </button>
-                    </div>
+                <div className="mt-4 flex items-center justify-between">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        const newQty = Math.max(1, (quantities[item.id] || 1) - 1);
+                        handleQuantityChange(item.id, newQty);
+                      }}
+                      className="p-1 rounded-full border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    >
+                      <Minus className="w-4 h-4" />
+                    </button>
+                    <span className="w-8 text-center">{quantities[item.id] || 1}</span>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleQuantityChange(item.id, (quantities[item.id] || 1) + 1);
+                      }}
+                      className="p-1 rounded-full border border-gray-300 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    >
+                      <Plus className="w-4 h-4" />
+                    </button>
                   </div>
-
-                  {/* Notes */}
-                  <div>
-                    <input
-                      type="text"
-                      placeholder="Special instructions (optional)"
-                      value={notes[item.id] || ''}
-                      onChange={(e) => setNotes(prev => ({ ...prev, [item.id]: e.target.value }))}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 focus:border-transparent text-sm"
-                    />
-                  </div>
-
-                  {/* Add to Cart Button */}
+                  
                   <button
-                    onClick={() => handleAddToCart(item)}
-                    className="w-full bg-orange-600 text-white py-3 rounded-lg font-semibold hover:bg-orange-700 transition-colors flex items-center justify-center space-x-2"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleAddToCart(item);
+                    }}
+                    className="px-4 py-2 bg-orange-600 text-white text-sm font-medium rounded-lg hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2 transition-colors flex items-center"
                   >
-                    <ShoppingCart className="w-5 h-5" />
-                    <span>Add to Cart</span>
+                    <ShoppingCart className="w-4 h-4 mr-1.5" />
+                    Add to Cart
                   </button>
                 </div>
               </div>

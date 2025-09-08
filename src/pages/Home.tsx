@@ -1,7 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
-import { ChefHat, Clock, Utensils, Star, ArrowRight, MapPin, Users, MessageCircle, Info, Sparkles, List } from 'lucide-react'
+import { Link, useNavigate } from 'react-router-dom'
+import { ChefHat, Clock, Utensils, Star, ArrowRight, MessageCircle, Info, Sparkles, List } from 'lucide-react'
+import MenuItemPreview from '../components/MenuItemPreview'
 import { MenuItem } from '../lib/supabase'
+import { useCart } from '../hooks/useCart'
+import toast from 'react-hot-toast'
 import { supabase } from '../lib/supabase'
 import { useMetaTags } from '../hooks/useMetaTags'
 import Carousel from '../components/Carousel'
@@ -11,6 +14,10 @@ const Home: React.FC = () => {
   const [loading, setLoading] = useState(true)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMenuOpen, setIsMenuOpen] = useState(true)
+  const [previewItem, setPreviewItem] = useState<MenuItem | null>(null)
+  const [quantity, setQuantity] = useState(1)
+  const { addToCart } = useCart()
+  const navigate = useNavigate()
 
   // Toggle menu on small screens when clicking outside
   const handleHeroClick = (e: React.MouseEvent) => {
@@ -322,6 +329,26 @@ const Home: React.FC = () => {
       </section>
 
       {/* Featured Menu Preview - Premium */}
+      {/* Menu Item Preview Modal */}
+      {previewItem && (
+        <div className="fixed inset-0 z-50">
+          <MenuItemPreview
+            item={previewItem}
+            onClose={() => setPreviewItem(null)}
+            onAddToCart={(item, qty) => {
+              addToCart({
+                menu_item: item,
+                quantity: qty,
+                notes: ''
+              })
+              toast.success(`${item.name} added to cart!`)
+            }}
+            quantity={quantity}
+            onQuantityChange={setQuantity}
+          />
+        </div>
+      )}
+
       <section id="ayaaz-bbq-pit" className="py-20 sm:py-24 md:py-32 px-4 sm:px-6 lg:px-8 bg-gradient-to-b from-gray-900 to-black text-white relative overflow-hidden">
         {/* Background Pattern */}
         <div className="absolute inset-0 opacity-10">
@@ -353,8 +380,19 @@ const Home: React.FC = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
-              {popularItems.map((item, index) => (
-                <div key={item.id} className="group bg-gradient-to-b from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl overflow-hidden shadow-2xl hover:shadow-orange-500/10 transition-all duration-500 transform hover:-translate-y-2 border border-gray-700/50">
+              {popularItems.map((item) => (
+                <div 
+                  key={item.id} 
+                  className="group bg-gradient-to-b from-gray-800/50 to-gray-900/50 backdrop-blur-sm rounded-2xl overflow-hidden shadow-2xl hover:shadow-orange-500/10 transition-all duration-500 transform hover:-translate-y-2 border border-gray-700/50 cursor-pointer"
+                  onClick={(e) => {
+                    // Don't trigger preview if clicking on buttons or links
+                    const target = e.target as HTMLElement;
+                    if (!target.closest('button') && !target.closest('a')) {
+                      setPreviewItem(item);
+                      setQuantity(1);
+                    }
+                  }}
+                >
                   <div className="relative overflow-hidden">
                     <img
                       src={item.image_url || 'https://images.pexels.com/photos/1639557/pexels-photo-1639557.jpeg?auto=compress&cs=tinysrgb&w=500'}
@@ -387,8 +425,17 @@ const Home: React.FC = () => {
                         UGX {item.price.toLocaleString()}
                       </span>
                       <Link
-                        to="/menu"
+                        to={`/menu?item=${item.id}`}
                         className="group/btn relative overflow-hidden w-full sm:w-auto bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-400 text-white px-6 py-3 rounded-full font-semibold text-sm sm:text-base transition-all duration-300 transform hover:scale-105 shadow-lg text-center min-h-[44px] flex items-center justify-center"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          // Add a small delay to allow the menu page to load and process the highlight
+                          const element = document.getElementById(`menu-item-${item.id}`);
+                          if (element) {
+                            e.preventDefault();
+                            navigate(`/menu?item=${item.id}`, { state: { from: 'home' } });
+                          }
+                        }}
                       >
                         <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 translate-x-[-100%] group-hover/btn:translate-x-[100%] transition-transform duration-700"></div>
                         <span className="relative">Order Now</span>
